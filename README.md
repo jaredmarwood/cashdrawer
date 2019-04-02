@@ -5,7 +5,9 @@ Perfect for when you have lost your key!
 https://download.epson-biz.com/modules/pos/index.php?page=single_soft&cid=4227&scat=33&pcat=3
 
 2. install wxPython
+
 pip3 install wxPython
 
 3. run the app:
+
 python3 cdraw.py
