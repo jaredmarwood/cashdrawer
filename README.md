@@ -8,6 +8,8 @@ https://download.epson-biz.com/modules/pos/index.php?page=single_soft&cid=4227&s
 
 pip3 install wxPython
 
-3. run the app:
+3. change the printer name to your printer in cdraw.py
+
+4. run the app:
 
 python3 cdraw.py

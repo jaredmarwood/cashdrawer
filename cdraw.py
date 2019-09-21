@@ -1,8 +1,10 @@
-import wx
-from wx.lib.embeddedimage import PyEmbeddedImage
-from wx.adv import TaskBarIcon
-from wx import Icon
 import os
+
+import wx
+from wx import Icon
+from wx.adv import TaskBarIcon
+from wx.lib.embeddedimage import PyEmbeddedImage
+
 
 class CashDrawer:
   def OpenCashDrawer(self, printername='EPSON_TM_T88V'):
@@ -18,6 +20,7 @@ appicon = PyEmbeddedImage(
 class CashDrawerBarIcon(TaskBarIcon):
   TBMENU_OPEN_CASHDRAWER = 101
   TBMENU_CLOSE   = 102
+  HOTKEY_ID = 103
   
   def __init__(self, frame):
     TaskBarIcon.__init__(self)
@@ -25,6 +28,7 @@ class CashDrawerBarIcon(TaskBarIcon):
     # Set the image
     icon = self.MakeIcon(appicon.GetImage())
     self.SetIcon(icon, "Open Cash Drawer")
+    
     # bind events
     self.Bind(wx.adv.EVT_TASKBAR_LEFT_DCLICK, self.OnTaskBarActivate)
     self.Bind(wx.EVT_MENU, self.OnTaskBarActivate, id=self.TBMENU_OPEN_CASHDRAWER)
@@ -65,15 +69,26 @@ class CashDrawerBarIcon(TaskBarIcon):
       wx.CallAfter(self.frame.Close)
 
 class MainFrame(wx.Frame):
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, title="Epson TM-T88V Open Draw")
-        #wx.Frame(None,-1,'')
-        self.tbicon = CashDrawerBarIcon(self)
-        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
+  HOTKEY_ID = 103
+  def __init__(self, parent):
+    wx.Frame.__init__(self, parent, title="Epson TM-T88V Open Draw")
+    #wx.Frame(None,-1,'')
+    #create hotkey global
+    self.CreateHotKey()
+    self.tbicon = CashDrawerBarIcon(self)
+    self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
+    self.Bind(wx.EVT_HOTKEY, self.HandleHotKey, id=self.HOTKEY_ID)
 
-    def OnCloseWindow(self, evt):
-        self.tbicon.Destroy()
-        evt.Skip()
+  def CreateHotKey(self):
+    result = self.RegisterHotKey(self.HOTKEY_ID, wx.MOD_CONTROL|wx.MOD_SHIFT, ord('o'))
+  
+  def HandleHotKey(self, evt):
+    self.tbicon.OpenDrawer()
+    evt.Skip()
+
+  def OnCloseWindow(self, evt):
+      self.tbicon.Destroy()
+      evt.Skip()
         
 
 app = wx.App(redirect=False)
